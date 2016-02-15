@@ -27,12 +27,49 @@
 #rulename <colon> <space seperated dependency list>
 #<tab> <command>
 
-import sys
+import argument
 
 def main():
     """
     """
 
+    f = argument.Arguments()
+    #Requried arguments, first argument will be stored as "candy"
+    f.always("candy", help="Candy name")
+
+    #optional unnamed value
+    f.maybe("soda")
+
+    #optional value, set a default, can be changed by adding: --num=30, or -n=30
+    f.option("num",
+        25,
+        help="How many pieces?",
+        abbr="n"
+        )
+    #add a switch, a flag with no argument
+    f.switch("reverse",
+        help="Reverse ordering",
+        abbr="r"
+    )
+    f.switch("unwrap", help="unwrapcandy", abbr="u")
+
+    #Process data before saving it
+    f.process("candy", lambda x: x.upper())
+    #Parse num as integer
+    f.process("num", lambda x: int(x))
+    f.validate("num", lambda x: x > 10)
+
+
+
+    #get data
+    arguments, errors = f.parse()
+
+    if len(errors) > 0:
+        print(errors)
+        print
+        print(f)
+    else:
+        print(arguments)
 
 if __name__ == '__main__':
     main()
