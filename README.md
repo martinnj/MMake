@@ -6,12 +6,16 @@ compile the nodes on different threads.
  - Python 3
  - python3-pip
  - [virtualenv](https://pypi.python.org/pypi/virtualenv)
- - [Argument](https://pypi.python.org/pypi/argument)
+ - [argument](https://pypi.python.org/pypi/argument)
 
-# Developing
+# Setting up the development environment
+
  - ```$ virtualenv -p /usr/bin/python3.4 venv```
  - ```$ source venv/bin/activate```
  - ```$ pip3 install -r requirements.txt```
+ - ```$ source venv/bin/activate```
+ - Do development!
+ - ```$ deactivate```
 
 # License
 mtmake is licensed under the MIT license, see the [LICENSE](LICENSE) file for
