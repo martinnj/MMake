@@ -49,6 +49,11 @@ def main():
         help="The target to build.",
         abbr="t"
         )
+    f.option("args",
+        "",
+        help="String with arguments to pass through to the make commands.",
+        abbr="a"
+        )
 
     print(f)
 
