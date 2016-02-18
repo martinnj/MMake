@@ -172,7 +172,7 @@ def make_target(makefile, target, args):
         proc.wait()
 
         with open(makefile + "." + target + ".log", mode="w") as f:
-            f.write(str(output))
+            f.write(output.decode("utf-8"))
             f.close()
 
         return proc.returncode
