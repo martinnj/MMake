@@ -203,13 +203,12 @@ def main():
 
     # Check the thread number.
     if multiprocessing.cpu_count() < args["numthreads"]:
+        global WORKERS
         if yn_prompt("The selected number of threads (%d), is larger than " +
                      "the number of cores in your machine (%d), should i " +
                      "decrease it?"):
-            global WORKERS
             WORKERS = multiprocessing.cpu_count()
         else:
-            global WORKERS
             WORKERS = args["numthreads"]
 
 
