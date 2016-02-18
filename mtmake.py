@@ -29,9 +29,11 @@
 
 # Standard imports.
 
-import re                 # RegExps For parsing the makefile.
-import multiprocessing    # For detecting CPU count.
-import concurrent.futures # For thread pool.
+import re                          # RegExps For parsing the makefile.
+import multiprocessing             # For detecting CPU count.
+import concurrent.futures          # For thread pool.
+from subprocess import Popen, PIPE # For starting external make commands.
+import shlex                       # Used to parse argument strings.
 
 # Non standard imports.
 import argument           # Provides a parser for arguments.
@@ -154,14 +156,27 @@ def print_greeter():
     print(" MtMake version " + VERSION)
     print(" Copyright (c) 2016 Sarah V. Nøhr & Martin J\n\n")
 
-def make_target(makefile, target):
+def make_target(makefile, target, args):
     """
     Builds a specific target from a given makefile.
 
     @makefile path to the makefile we wish to build from.
 
     @target the target we wish to build.
+
+    @args a string of arguments to pass to the make command.
     """
+    cmd = shlex.split("make -f" + makefile + " " + args + " " + target)
+    with Popen(cmd, stdout=PIPE) as proc:
+        output = proc.stdout.read()
+        proc.wait()
+
+        with open(makefile + "." + target + ".log", mode="w") as f:
+            f.write(output.decode("utf-8"))
+            f.close()
+
+        return proc.returncode
+    
 
 def main():
 
@@ -188,21 +203,21 @@ def main():
 
     # Check the thread number.
     if multiprocessing.cpu_count() < args["numthreads"]:
+        global WORKERS
         if yn_prompt("The selected number of threads (%d), is larger than " +
                      "the number of cores in your machine (%d), should i " +
                      "decrease it?"):
-            global WORKERS
             WORKERS = multiprocessing.cpu_count()
         else:
-            global WORKERS
             WORKERS = args["numthreads"]
 
 
     verbose_print("Verbose output is ON.")
-    print("Build Target: " + str(args["target"]))
-    print("Processing makefile: " + str(args["makefile"]))
+    print("Build Target: " + args["target"])
+    print("Processing makefile: " + args["makefile"])
     print("Number of worker threads: " + str(WORKERS))
-    print("Arguments that will be passed to each make command:\n\t" + str(args["args"] + "\n\n"))
+    print("Arguments that will be passed to each make command:\n\t" +
+          str(args["args"] + "\n\n"))
 
     try:
         with open(args["makefile"]) as f:
@@ -211,7 +226,7 @@ def main():
 
             # TODO: Makefile anlysis and dependency graph building.
 
-            makefile_regex = '[]'
+            makefile_regex = ''
             res = re.search(makefile_regex, file_content)
             f.close()
 
@@ -225,6 +240,7 @@ def main():
     with concurrent.futures.ThreadPoolExecutor(max_workers=WORKERS) as executor:
         print("")
         #Example: https://docs.python.org/dev/library/concurrent.futures.html#threadpoolexecutor-example
+        make_target(args["makefile"], args["target"], args["args"])
 
 if __name__ == '__main__':
     main()
