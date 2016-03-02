@@ -52,7 +52,6 @@ def test_node_search():
     n4 = Node("Node4")
 
     n1.add_child(n2)
-    n1.add_child(n2)
     n1.add_child(n3)
     n2.add_child(n4)
 

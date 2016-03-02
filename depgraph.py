@@ -41,7 +41,7 @@ class Node(object):
         self.parents.append(parent)
         parent.children.append(self)
     
-    def search(self, name, visited = []):
+    def search(self, nname, visited=None):
         """
         Search a the nodes subtree for a node with a given name.
         
@@ -52,15 +52,20 @@ class Node(object):
             If the node is in the tree, returns the Node in question.
             Otherwise, returns None.
         """
-        if self.name == name:
+
+        ## Guards against: http://effbot.org/zone/default-values.htm
+        if visited is None:
+            visited = []
+
+        if self.name == nname:
             return self
         visited.append(self.name)
         for child in self.children:
             if not (child.name in visited): 
-                res = child.search(name, visited)
+                res = child.search(nname, visited)
+                print(self.name + " : (" + child.name + " == " + nname + ") = " + str(res))
                 if res != None:
                     return res
-                visited.append(child.name)
         return None
     
     def return_tree(self, list, visited):
