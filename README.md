@@ -13,7 +13,6 @@ compile the nodes on different threads.
  - ```$ virtualenv -p /usr/bin/python3.4 venv```
  - ```$ source venv/bin/activate```
  - ```$ pip3 install -r requirements.txt```
- - ```$ source venv/bin/activate```
  - Do development!
  - ```$ deactivate```
 
