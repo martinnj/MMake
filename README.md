@@ -3,8 +3,8 @@ MultiThreaded Make wrapper. The idea is to build a dependency graph and
 compile the nodes on different threads.
 
 # Requirements
- - Python 3
- - python3-pip
+ - Python 3.4 - 3.5
+ - [pip](https://pypi.python.org/pypi/pip)
  - [virtualenv](https://pypi.python.org/pypi/virtualenv)
  - [argument](https://pypi.python.org/pypi/argument)
  - [nose](https://pypi.python.org/pypi/nose)
