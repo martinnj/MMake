@@ -43,13 +43,13 @@ class Node(object):
     
     def search(self, name):
         """
-        Checks if a node is part of this node's tree.
+        Search a the nodes subtree for a node with a given name.
         
         Key arguments:
-            name -- A string consisting of the key identifier of a node
+            name -- A string with the name of the node to look for.
         
         Returns:
-            If the node is in the tree, returns the object.
+            If the node is in the tree, returns the Node in question.
             Otherwise, returns None.
         """
         if self.name == name:
