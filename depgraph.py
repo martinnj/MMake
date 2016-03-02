@@ -15,28 +15,31 @@ class Node(object):
             name -- A string consisting of the key identifier
         """
         self.name = name
-        self.branches = []
-        self.leaves = []
+        self.parents = []
+        self.children = []
+
+    def __str__(self):
+        return "Node( " + self.name + " )"
     
-    def add_leaf(self, leaf):
+    def add_child(self, child):
         """
-        Adds a leaf to the node.
+        Adds a child to the node.
         
         Key arguments:
-            leaf -- Another node object
+            child -- Another node object
         """
-        leaf.branches.append(self)
-        self.leaves.append(leaf)
+        leaf.parents.append(self)
+        self.children.append(leaf)
     
-    def add_branch(self, branch):
+    def add_parent(self, parent):
         """
-        Adds a branch to the node
+        Adds a parent to the node
         
         Key arguments:
-            branch -- Another node object
+            parent -- Another node object
         """
-        self.branches.append(branch)
-        branch.leaves.append(self)
+        self.parents.append(parent)
+        parent.children.append(self)
     
     def search(self, member):
         """
@@ -52,7 +55,7 @@ class Node(object):
         if self.name == member:
             return self
         for i in range(0, len(self.leaves)):
-            res = self.leaves[i].search(member)
+            res = self.children[i].search(member)
             if res != None:
                 return res
         return None
@@ -69,9 +72,9 @@ class Node(object):
         """
         if not (self in visited):
             visited.append(self)
-            list.append((self.name, self.leaves))
-            for i in range(0, len(self.leaves)):
-                self.leaves[i].return_tree(list, visited)
+            list.append((self.name, self.children))
+            for i in range(0, len(self.children)):
+                self.children[i].return_tree(list, visited)
         return list
 
 class DependencyGraph(object):
@@ -128,7 +131,7 @@ class DependencyGraph(object):
             node = Node(nodename)
         dependency = self.head.search(depname)
         if dependency != None:
-            if self.head in dependency.branches:
+            if self.head in dependency.parents:
                 self.head.leaves.remove(dependency)
             node.add_branch(dependency.branch)
             node.add_leaf(dependency)
