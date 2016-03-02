@@ -7,6 +7,7 @@ compile the nodes on different threads.
  - python3-pip
  - [virtualenv](https://pypi.python.org/pypi/virtualenv)
  - [argument](https://pypi.python.org/pypi/argument)
+ - [nose](https://pypi.python.org/pypi/nose)
 
 # Setting up the development environment
 
