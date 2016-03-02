@@ -19,7 +19,7 @@ class Node(object):
         self.children = []
 
     def __str__(self):
-        return "Node( " + self.name + " )"
+        return "NODE( " + self.name + " )"
     
     def add_child(self, child):
         """
@@ -28,8 +28,8 @@ class Node(object):
         Key arguments:
             child -- Another node object
         """
-        leaf.parents.append(self)
-        self.children.append(leaf)
+        child.parents.append(self)
+        self.children.append(child)
     
     def add_parent(self, parent):
         """
@@ -41,21 +41,21 @@ class Node(object):
         self.parents.append(parent)
         parent.children.append(self)
     
-    def search(self, member):
+    def search(self, name):
         """
         Checks if a node is part of this node's tree.
         
         Key arguments:
-            member -- A string consisting of the key identifier of a node
+            name -- A string consisting of the key identifier of a node
         
         Returns:
-            If the object is in the tree, returns the object.
+            If the node is in the tree, returns the object.
             Otherwise, returns None.
         """
-        if self.name == member:
+        if self.name == name:
             return self
-        for i in range(0, len(self.leaves)):
-            res = self.children[i].search(member)
+        for node in self.children:
+            res = node.search(name)
             if res != None:
                 return res
         return None
