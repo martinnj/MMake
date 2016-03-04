@@ -218,7 +218,7 @@ class DependencyGraph(object):
                     output += ", "
             print(output)
     
-    def convert_makefile(self, objlist):
+    def convert_objlist(self, objlist):
         """
         Takes a (makefile) list of the following form:
         
@@ -266,3 +266,20 @@ class DependencyGraph(object):
         
         print("Not added due to lack of necessary dependancies: "
               + str(dependent))
+
+    def makefile_to_objlist(filepath):
+        """
+        Takes a path to a makefile and constructs an object list
+        that can be converted to a dependency graph.
+        """
+        #TODO: Implement.
+        pass
+
+    def from_makefile(filepath):
+        """
+        Takes a filepath and creates a dependency graph.
+
+        NOTE: It will write over any graph currently stored.
+        """
+        #TODO: Implement.
+        pass
