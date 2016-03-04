@@ -1,4 +1,4 @@
-# MtMake
+# MtMake [![Build Status](https://travis-ci.org/martinnj/mtmake.svg?branch=master)](https://travis-ci.org/martinnj/mtmake)
 MultiThreaded Make wrapper. The idea is to build a dependency graph and
 compile the nodes on different threads.
 
