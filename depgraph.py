@@ -4,7 +4,11 @@ Dependency Graph
 
 class Node(object):
     """
-    A simple node object for use in a tree graph
+    A simple node object for use in a graph.
+
+    The Nodes does not prevent you from adding circular dependencies,
+    but the traversing functions such as search will not reflect these
+    recurrences.
     """
     def __init__(self, name):
         """
@@ -46,7 +50,7 @@ class Node(object):
         Search a the nodes subtree for a node with a given name.
         
         Key arguments:
-            name -- A string with the name of the node to look for.
+            nname -- A string with the name of the node to look for.
         
         Returns:
             If the node is in the tree, returns the Node in question.
@@ -68,7 +72,7 @@ class Node(object):
                     return res
         return None
     
-    def return_tree(self, list, visited):
+    def return_tree(self, olist, visited=None):
         """
         Return this node's tree.
         
@@ -78,12 +82,15 @@ class Node(object):
         Returns:
             list -- The tree of the node appended to the list
         """
+        if visited is None:
+            visited = []
+
         if not (self in visited):
             visited.append(self)
-            list.append((self.name, self.children))
-            for i in range(0, len(self.children)):
-                self.children[i].return_tree(list, visited)
-        return list
+            olist.append((self.name, self.children))
+            for child in self.children:
+                child.return_tree(olist, visited)
+        return olist
 
 class DependencyGraph(object):
     """
@@ -104,8 +111,8 @@ class DependencyGraph(object):
         if self.endnodes == None:
             endnodes += "None|"
         else:
-            for i in range (0, len(self.endnodes)):
-                endnodes += self.endnodes[i].name + "|"
+            for node in self.endnodes:
+                endnodes += node.name + "|"
         print("Independent nodes: " + endnodes)
     
     def add_independent(self, node):
@@ -115,9 +122,12 @@ class DependencyGraph(object):
         Key arguments:
             node -- The independent node to be added to the graph
         """
-        node.branch = self.head
+        node.add_parent(self.head)
+
+        # TODO: Do we need the endnode list if they are all connected to
+        # the HEAD anyway?
         self.endnodes.append(node)
-        self.head.leaves.append(node)
+        self.head.add_child(node)
     
     def add_dependency(self, nodename, depname):
         """
@@ -141,8 +151,8 @@ class DependencyGraph(object):
         if dependency != None:
             if self.head in dependency.parents:
                 self.head.leaves.remove(dependency)
-            node.add_branch(dependency.branch)
-            node.add_leaf(dependency)
+            node.add_parent(dependency.branch)
+            node.add_child(dependency)
             return True
         else:
             return False
@@ -155,12 +165,12 @@ class DependencyGraph(object):
             node -- The node to look up dependencies for
         
         Returns:
-            list -- A list of the names of all dependencies of the given node
+            dependencies -- A list of the names of all dependencies of the given node
         """ 
-        list = []
-        for i in range(0, len(node.leaves)):
-            list.append(node.leaves[i].name)
-        return list
+        dependencies = []
+        for child in node.children:
+            dependencies.append(child.name)
+        return dependencies
     
     def return_dependencies_str(self, node):
         """
@@ -173,12 +183,11 @@ class DependencyGraph(object):
             str -- A string containing all near dependencies of the node in
             readable form.
         """
-        str = "Dependencies of " + node.name + ": "
-        for i in range(0, len(node.leaves)):
-            str += node.leaves[i].name
-            if i != len(node.leaves) - 1:
-                str += ", "
-        return str
+        ostr = "Dependencies of " + node.name + ": "
+        for child in node.children:
+            ostr += child.name + ", "
+
+        return ostr[:-2]
     
     def return_graph(self):
         """
@@ -189,26 +198,27 @@ class DependencyGraph(object):
              ...
              (Node, [Dependency, Dependency, ... Dependency])]
         """
-        list = []
-        visited = []
-        for i in range(0, len(self.head.leaves)):
-            self.head.leaves[i].return_tree(list, visited)
-        return list
+        graph = []
+
+        for node in self.head.children:
+            node.return_tree(graph)
+        return graph
     
     def print_graph(self):
         """
         Prints the graph in a (somewhat) readable form.
         """
         graph = self.return_graph()
-        for i in range(0, len(graph)):
-            str = "Dependencies of " + graph[i][0] + ": "
-            for j in range(0, len(graph[i][1])):
-                str += graph[i][1][j].name
+        for i in xrange(0, len(graph)):
+            output = "Dependencies of " + graph[i][0] + ": "
+
+            for j in xrange(0, len(graph[i][1])):
+                output += graph[i][1][j].name
                 if j != len(graph[i][1]) - 1:
-                    str += ", "
-            print(str)
+                    output += ", "
+            print(output)
     
-    def convert_makefile(self, list):
+    def convert_makefile(self, objlist):
         """
         Takes a (makefile) list of the following form:
         
@@ -220,20 +230,20 @@ class DependencyGraph(object):
         
         This list is then converted into a dependency graph.
         
-        NOTE: It will write over any current graph stored.
+        NOTE: It will write over any graph currently stored.
         """
         self.endnodes = []
         
         independent = []
         dependent = []
-        for i in range(0, len(list)):
-            if list[i][1] == []:
-                independent.append(list[i])
+        for i in xrange(0, len(objlist)):
+            if objlist[i][1] == []:
+                independent.append(objlist[i])
             else:
-                dependent.append(list[i])
+                dependent.append(objlist[i])
                 
         # Add all independent nodes
-        for j in range(0, len(independent)):
+        for j in xrange(0, len(independent)):
             self.add_independent(Node(independent[j][0]))
         
         # Runs through all dependent nodes until they have all been added.
@@ -241,13 +251,13 @@ class DependencyGraph(object):
         check = 0
         while dependent != []:
             check = len(dependent)
-            for k in range(0, len(dependent)):
+            for k in xrange(0, len(dependent)):
                 deleted = []
-                for l in range(0, len(dependent[k][1])):
+                for l in xrange(0, len(dependent[k][1])):
                     if self.add_dependency(dependent[k][0],
-                                            dependent[k][1][l]):
+                                           dependent[k][1][l]):
                         deleted.append(dependent[k][1][l])
-                for m in range(0, len(deleted)):
+                for m in xrange(0, len(deleted)):
                     dependent[k][1].remove(deleted[m])
                 if dependent[k][1] == []:
                     del dependent[k]
