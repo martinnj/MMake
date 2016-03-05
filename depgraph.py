@@ -1,6 +1,4 @@
-"""
-Dependency Graph
-"""
+import regex 
 
 class Node(object):
     """
