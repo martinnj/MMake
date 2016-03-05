@@ -8,6 +8,7 @@ compile the nodes on different threads.
  - [virtualenv](https://pypi.python.org/pypi/virtualenv)
  - [argument](https://pypi.python.org/pypi/argument)
  - [nose](https://pypi.python.org/pypi/nose)
+ - [regex](https://pypi.python.org/pypi/regex)
 
 # Setting up the development environment on Linux
 
@@ -19,7 +20,7 @@ should work on Mint, Debian and Ubuntu.
  - ```$ git clone git@github.com:martinnj/mtmake```
  - ```$ cd mtmake```
  - ```$ virtualenv -p /usr/bin/python3.4 venv``` (you can substitute which ever
-   version of Python 3, but I use 3.4)
+   version of Python 3, but we test on 3.4 and 3.5.)
  - ```$ source venv/bin/activate```
  - ```$ pip3 install -r requirements.txt```
  - Do development!
