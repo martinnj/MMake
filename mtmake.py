@@ -141,14 +141,14 @@ def create_arguments():
         )
     return f
 
-def print_help(args_parser):
+def print_help(args_parser, exit_code):
     """
     Prints the help tips from a argument parsers and exits.
 
     @args_parser argument parser to print before exit.
     """
     print(args_parser)
-    exit(1)
+    exit(exit_code)
 
 def print_greeter():
     """
@@ -192,11 +192,11 @@ def main():
         for error in errors:
             print(error)
         print("")
-        print_help(args_parser)
+        print_help(args_parser,1)
 
 
     if args["help"]:
-        print_help(args_parser)
+        print_help(args_parser,0)
 
     global VERBOSE, SUPRESS
     VERBOSE = args["verbose"]
