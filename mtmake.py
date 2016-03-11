@@ -28,7 +28,6 @@
 #<tab> <command>
 
 # Standard imports.
-
 import re                          # RegExps For parsing the makefile.
 import multiprocessing             # For detecting CPU count.
 import concurrent.futures          # For thread pool.
@@ -37,6 +36,8 @@ import shlex                       # Used to parse argument strings.
 
 # Non standard imports.
 import argument           # Provides a parser for arguments.
+
+import depgraph
 
 VERSION = "0.0.1"
 VERBOSE = True
