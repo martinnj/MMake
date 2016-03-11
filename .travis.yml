@@ -4,6 +4,6 @@ python:
   - "3.5"
 install: "pip install -r requirements.txt"
 script: nosetests -v tests
-script: coverage run mtmake.py help
+script: coverage run mtmake.py --help
 after_success:
   coveralls
